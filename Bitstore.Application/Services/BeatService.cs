@@ -1,4 +1,6 @@
-﻿using Bitstore.Core.Abstractions;
+﻿using Bitstore.Application.Abstractions;
+using Bitstore.Application.Exceptions;
+using Bitstore.Core.Abstractions;
 using Bitstore.Core.Models;
 using Bitstore.DTO.Beat;
 using Serilog;
@@ -67,7 +69,7 @@ public class BeatService(
             request.Title,
             request.Price,
             request.AudioUrl,
-            true,
+            request.IsPublished,
             request.Description,
             request.CoverUrl,
             user);
@@ -77,13 +79,49 @@ public class BeatService(
         Log.Information("Created new beat {BeatId} by {UserId}", beat.Id, user.Id);
     }
 
-    public Task UpdateBeat()
+    // доделать
+    public async Task UpdateBeat(Guid beatId, UpdateBeatRequest request)
     {
-        throw new Exception();
+        var currentUserId = _currentUserService.GetUserId();
+
+        Log.Information("User {UserId} attempting to update beat {BeatId}", currentUserId, beatId);
+
+        var beat = await _beatRepository.GetById(beatId);
+        
+        if (beat == null)
+            throw new NotFoundException($"Beat with id {beatId} not found");
+        
+        if (beat.UserId != currentUserId)
+        {
+            Log.Warning("User {UserId} does not have permission to update beat {BeatId}", currentUserId, beatId);
+            throw new UnauthorizedAccessException("You can only edit your own beats");
+        }
+
+        var updatedBeat = Beat.Create(
+            request.Title,
+            request.Price,
+            request.AudioUrl,
+            beat.IsPublished,
+            request.Description,
+            request.CoverUrl,
+            beat.User);
+
+        await _beatRepository.Update(updatedBeat);
+
+        Log.Information("Beat {BeatId} updated successfully by user {UserId}", beatId, currentUserId);
     }
 
-    public Task DeleteBeat()
+    public async Task<bool> DeleteBeat(Guid beatId)
     {
-        throw new Exception();
+        if (currentUserService.GetUserRole() != "Admin")
+            throw new UnauthorizedAccessException("Only admin users can do this");
+        
+        var result = await userRepository.Delete(beatId);
+        
+        Log.Information("The result of deleting beat with id {beatId} is {result}", beatId, result);
+        
+        return result;
     }
+
+    
 }

@@ -1,4 +1,5 @@
 using System.Text;
+using Bitstore.Application.Abstractions;
 using Bitstore.Application.DTO.User;
 using Bitstore.Application.Services;
 using Bitstore.Core.Abstractions;
@@ -85,6 +86,7 @@ builder.Services.AddDbContext<BitstoreDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("BitstoreDbContext"));
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DefaultPolicy", policy =>
@@ -101,6 +103,7 @@ builder.Services.AddScoped<IValidator<RegisterUserRequest>, RegisterUserRequestV
 
 builder.Services.AddScoped<IValidator<BeatRequest>, BeatRequestValidator>();
 builder.Services.AddScoped<IValidator<BeatResponse>, BeatResponseValidator>();
+builder.Services.AddScoped<IValidator<UpdateBeatRequest>, UpdateBeatRequestValidator>();
 
 builder.Services.AddScoped<IValidator<UserUpdateBalanceRequest>, UserUpdateBalanceRequestValidator>();
 builder.Services.AddScoped<IValidator<UserUpdateRequest>, UserUpdateRequestValidator>();

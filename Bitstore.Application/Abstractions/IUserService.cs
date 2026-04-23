@@ -1,7 +1,7 @@
 ﻿using Bitstore.Application.DTO.User;
 using Bitstore.Core.Models;
 
-namespace Bitstore.Core.Abstractions;
+namespace Bitstore.Application.Abstractions;
 
 public interface IUserService
 {
@@ -12,5 +12,5 @@ public interface IUserService
     Task UpdateUser(Guid userId, UserUpdateRequest request);
     Task CreateUser(User user);
     Task<decimal> GetBalance(Guid userId);
-    Task UpdateBalance(Guid userId, decimal amount);
+    Task UpdateBalance(UserUpdateBalanceRequest request);
 }

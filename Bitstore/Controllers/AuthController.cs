@@ -1,4 +1,5 @@
-﻿using Bitstore.Core.Abstractions;
+﻿using Bitstore.Application.Abstractions;
+using Bitstore.Core.Abstractions;
 using Bitstore.DTO.Auth;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,5 @@
-﻿using Bitstore.Application.DTO.User;
+﻿using Bitstore.Application.Abstractions;
+using Bitstore.Application.DTO.User;
 using Bitstore.Application.Exceptions;
 using Bitstore.Core.Abstractions;
 using Bitstore.Core.Models;
@@ -118,19 +119,19 @@ public class UserService(IUserRepository userRepository,
         return balance;
     }
 
-    public async Task UpdateBalance(Guid userId, decimal amount)
+    public async Task UpdateBalance(UserUpdateBalanceRequest request)
     {
         var currentUserId = currentUserService.GetUserId();
         var isAdmin = currentUserService.IsInRole("Admin");
-        if (currentUserId != userId && !isAdmin)
+        if (currentUserId != request.UserId && !isAdmin)
         {
             Log.Error("User {CurrentUserId} attempted to update balance of user {TargetUserId}"
-                ,currentUserId, userId);
+                ,currentUserId, request.UserId);
             throw new UnauthorizedAccessException("Only admin users can update balance");
         }
-        Log.Information("Balance of user {userId} was updated", userId);
+        Log.Information("Balance of user {userId} was updated", request.UserId);
         
-        await userRepository.UpdateBalance(userId, amount);
+        await userRepository.UpdateBalance(request.UserId, request.Amount);
         
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Bitstore.Core.Abstractions;
+﻿namespace Bitstore.Application.Abstractions;
 
 public interface ICurrentUserService
 {

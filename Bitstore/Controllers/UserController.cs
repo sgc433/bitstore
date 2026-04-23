@@ -1,4 +1,5 @@
-﻿using Bitstore.Application.DTO.User;
+﻿using Bitstore.Application.Abstractions;
+using Bitstore.Application.DTO.User;
 using Bitstore.Core.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +57,7 @@ public class UserController(IUserService userService): Controller
     [HttpPut("updatebalance")]
     public async Task<IActionResult> UpdateBalance(UserUpdateBalanceRequest request)
     {
-        await _userService.UpdateBalance(request.UserId, request.Amount);
+        await _userService.UpdateBalance(request);
         return Ok();
     }
     

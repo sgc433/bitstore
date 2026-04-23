@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Bitstore.Application.Abstractions;
 using Bitstore.Core.Abstractions;
 using Bitstore.Core.Enums;
 using Bitstore.Core.Models;
