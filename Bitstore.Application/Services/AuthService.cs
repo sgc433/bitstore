@@ -15,7 +15,7 @@ public class AuthService(
 {
     public async Task Resgister(RegisterUserRequest request)
     {
-        var existingUser = await userRepository.ExistsByEmail(request.Email);
+        var existingUser = await userRepository.ExistsByEmailAsync(request.Email);
         
         if (existingUser)
             throw new Exception("User already exists");
@@ -27,12 +27,12 @@ public class AuthService(
         
         Log.Information("Registering user with username {Username}", user.Username);
         
-        await userRepository.Create(user);
+        await userRepository.CreateAsync(user);
     }
 
     public async Task<string> Login(LoginUserRequest request)
     {
-        var user = await userRepository.GetByEmail(request.Email);
+        var user = await userRepository.GetByEmailAsync(request.Email);
         
         var result = passwordHasher.Verify(request.Password, user.PasswordHash);
         

@@ -14,15 +14,13 @@ namespace Bitstore.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class BeatController(IBeatService beatService,
-    IUserService userService, ICurrentUserService currentUserService): Controller
+public class BeatController(IBeatService beatService): Controller
 {
     private readonly IBeatService _beatService = beatService;
-    private readonly IUserService _userService = userService;
-    
+
     [Authorize(Roles = "Admin")]
-    [HttpGet("allbeats")]
-    public async Task<ActionResult<List<Beat>>> GetAllBeats()
+    [HttpGet("all")]
+    public async Task<ActionResult<List<BeatResponse>>> GetAllBeats()
     {
         var beats = await _beatService.GetBeats();
         return Ok(beats);
@@ -38,10 +36,44 @@ public class BeatController(IBeatService beatService,
         return Ok(beats);
     }
     
-    [HttpPost("addbeat")]
+    [HttpGet("{beatId}")]
+    public async Task<ActionResult<BeatResponse>> GetBeatById(Guid beatId)
+    {
+        if (beatId == Guid.Empty)
+            throw new ArgumentException("Beat id cannot be empty");
+
+        var beat = await _beatService.GetBeatById(beatId);
+        return Ok(beat);
+    }
+    
+    [HttpPost("create")]
     public async Task<IActionResult> CreateBeat(BeatRequest request)
     {
         await _beatService.CreateBeat(request);
         return Ok();
     }
+    
+    [HttpPut("updatebeat/{beatId}")]
+    public async Task<IActionResult> UpdateBeat(Guid beatId, UpdateBeatRequest request)
+    {
+        if (beatId == Guid.Empty)
+            throw new ArgumentException("Beat id cannot be empty");
+
+        await _beatService.UpdateBeat(beatId, request);
+        return Ok();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("deletebeat/{beatId}")]
+    public async Task<IActionResult> DeleteBeat(Guid beatId)
+    {
+        if (beatId == Guid.Empty)
+            throw new ArgumentException("Beat id cannot be empty");
+
+        var result = await _beatService.DeleteBeat(beatId);
+        return Ok(result);
+    }
+    
+    
+    
 }

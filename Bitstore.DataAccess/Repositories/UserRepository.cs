@@ -11,7 +11,7 @@ public class UserRepository(BitstoreDbContext context): IUserRepository
 {
     private readonly BitstoreDbContext _context = context;
     
-    public async Task Create(User user)
+    public async Task CreateAsync(User user)
     {
         if (user == null)
             throw new ArgumentNullException(nameof(user));
@@ -32,7 +32,7 @@ public class UserRepository(BitstoreDbContext context): IUserRepository
         
     }
 
-    public async Task<List<User>> GetAll()
+    public async Task<List<User>> GetAllAsync()
     {
         Log.Information("Getting all users...");
         var userEntities = await _context.Users
@@ -45,13 +45,13 @@ public class UserRepository(BitstoreDbContext context): IUserRepository
         return users;
     }
 
-    public async Task<bool> ExistsByEmail(string email)
+    public async Task<bool> ExistsByEmailAsync(string email)
     {
         var result = await _context.Users.AnyAsync(u => u.Email == email);
         return result;
     }
 
-    public async Task<User> GetByEmail(string email)
+    public async Task<User> GetByEmailAsync(string email)
     {
         Log.Information("Getting user by email {Email}", email);
         
@@ -68,7 +68,7 @@ public class UserRepository(BitstoreDbContext context): IUserRepository
         return user;
     }
 
-    public async Task<User> GetById(Guid id)
+    public async Task<User> GetByIdAsync(Guid id)
     {
         Log.Information("Getting user by id {UserId}", id);
         
@@ -85,7 +85,7 @@ public class UserRepository(BitstoreDbContext context): IUserRepository
         return user;
     }
 
-    public async Task Update(User user)
+    public async Task UpdateAsync(User user)
     {
         Log.Information("Updating user with id {userId}...", user.Id);
         await _context.Users
@@ -98,7 +98,7 @@ public class UserRepository(BitstoreDbContext context): IUserRepository
         
     }
 
-    public async Task<bool> Delete(Guid userId)
+    public async Task<bool> DeleteAsync(Guid userId)
     {
         Log.Warning("Deleting user with id {userId}...", userId);
         var result = await _context.Users
@@ -110,7 +110,7 @@ public class UserRepository(BitstoreDbContext context): IUserRepository
         return true;
     }
 
-    public async Task<decimal> GetBalance(Guid userId)
+    public async Task<decimal> GetBalanceAsync(Guid userId)
     {
         Log.Information("Getting balance for user {userId} ...", userId);
         var userEntity = await _context.Users
@@ -123,7 +123,7 @@ public class UserRepository(BitstoreDbContext context): IUserRepository
         return userEntity.Balance;
     }
 
-    public async Task UpdateBalance(Guid userId, decimal amount)
+    public async Task UpdateBalanceAsync(Guid userId, decimal amount)
     {
         Log.Information("Updating balance for user {userId} ...", userId);
         var updatedCount = await _context.Users

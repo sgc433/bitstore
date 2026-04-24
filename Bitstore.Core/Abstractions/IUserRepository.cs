@@ -4,13 +4,13 @@ namespace Bitstore.Core.Abstractions;
 
 public interface IUserRepository
 {
-    Task Create(User user);
-    Task<List<User>> GetAll();
-    Task<bool> ExistsByEmail(string email);
-    Task<User> GetByEmail(string email);
-    Task<User> GetById(Guid id);
-    Task Update(User user);
-    Task<bool> Delete(Guid userId);
-    Task<decimal> GetBalance(Guid userId);
-    Task UpdateBalance(Guid userId, decimal amount);
+    Task CreateAsync(User user);
+    Task<List<User>> GetAllAsync();
+    Task<bool> ExistsByEmailAsync(string email);
+    Task<User> GetByEmailAsync(string email);
+    Task<User> GetByIdAsync(Guid id);
+    Task UpdateAsync(User user);
+    Task<bool> DeleteAsync(Guid userId);
+    Task<decimal> GetBalanceAsync(Guid userId);
+    Task UpdateBalanceAsync(Guid userId, decimal amount);
 }

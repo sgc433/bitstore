@@ -16,7 +16,7 @@ public class UserService(IUserRepository userRepository,
         if (currentUserService.GetUserRole() != "Admin")
             throw new UnauthorizedAccessException("Only admin users can do this");
         
-        var user = await userRepository.GetById(userId);
+        var user = await userRepository.GetByIdAsync(userId);
 
         var response = new UserResponse(
             user.Id,
@@ -35,7 +35,7 @@ public class UserService(IUserRepository userRepository,
         if (currentUserService.GetUserRole() != "Admin")
             throw new UnauthorizedAccessException("Only admin users can do this");
         
-        var users = await userRepository.GetAll();
+        var users = await userRepository.GetAllAsync();
 
         var response = users.Select(u =>
             new UserResponse(u.Id, u.Username,
@@ -50,7 +50,7 @@ public class UserService(IUserRepository userRepository,
         if (currentUserService.GetUserRole() != "Admin")
             throw new UnauthorizedAccessException("Only admin users can do this");
         
-        var user = await userRepository.GetByEmail(email);
+        var user = await userRepository.GetByEmailAsync(email);
         
         var response = new UserResponse(
             user.Id,
@@ -69,7 +69,7 @@ public class UserService(IUserRepository userRepository,
         if (currentUserService.GetUserRole() != "Admin")
             throw new UnauthorizedAccessException("Only admin users can do this");
         
-        var result = await userRepository.Delete(userId);
+        var result = await userRepository.DeleteAsync(userId);
         
         Log.Information("Deleting operation is {IsDeleted} ", result);
         
@@ -90,7 +90,7 @@ public class UserService(IUserRepository userRepository,
         
         Log.Information("User with id {UserId} was updated", userId);
         
-        await  userRepository.Update(user);
+        await  userRepository.UpdateAsync(user);
     }
 
     public async Task CreateUser(User user)
@@ -98,7 +98,7 @@ public class UserService(IUserRepository userRepository,
         if (user == null)
             throw new ArgumentNullException(nameof(user));
         
-        await userRepository.Create(user);
+        await userRepository.CreateAsync(user);
     }
 
     public async Task<decimal> GetBalance(Guid userId)
@@ -115,7 +115,7 @@ public class UserService(IUserRepository userRepository,
                 
         Log.Information("Balance requested for user {UserId}", userId);
         
-        var balance = await userRepository.GetBalance(userId);
+        var balance = await userRepository.GetBalanceAsync(userId);
         return balance;
     }
 
@@ -131,7 +131,7 @@ public class UserService(IUserRepository userRepository,
         }
         Log.Information("Balance of user {userId} was updated", request.UserId);
         
-        await userRepository.UpdateBalance(request.UserId, request.Amount);
+        await userRepository.UpdateBalanceAsync(request.UserId, request.Amount);
         
     }
 }

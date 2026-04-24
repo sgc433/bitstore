@@ -62,6 +62,17 @@ public class UserController(IUserService userService): Controller
     }
     
     [Authorize(Roles = "Admin")]
+    [HttpPut("updateuser")]
+    public async Task<IActionResult> UpdateUserById(Guid userId, UserUpdateRequest request)
+    {
+        if (userId == Guid.Empty)
+            throw new ArgumentNullException($"User id is required");
+        
+        await _userService.UpdateUser(userId, request);
+        return Ok();
+    }
+    
+    [Authorize(Roles = "Admin")]
     [HttpDelete("deleteuser")]
     public async Task<ActionResult<bool>> DeleteUserById(Guid userId)
     {
@@ -72,14 +83,5 @@ public class UserController(IUserService userService): Controller
         return Ok(result);
     }
     
-    [Authorize(Roles = "Admin")]
-    [HttpPut("updateuser")]
-    public async Task<IActionResult> UpdateUserById(Guid userId, UserUpdateRequest request)
-    {
-        if (userId == Guid.Empty)
-            throw new ArgumentNullException($"User id is required");
-        
-        await _userService.UpdateUser(userId, request);
-        return Ok();
-    }
+    
 }

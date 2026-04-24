@@ -36,13 +36,13 @@ public class Beat
         CreatedAt = createdAt;
     }
     
-    public Guid Id { get; }
-    public string Title { get; }
-    public decimal Price  { get; }
-    public string? Description { get; }
-    public string AudioUrl { get; }
-    public string? CoverUrl { get; } //обложка
-    public bool IsPublished { get; }
+    public Guid Id { get; private set; }
+    public string Title { get; private set; }
+    public decimal Price  { get; private set;}
+    public string? Description { get; private set;}
+    public string AudioUrl { get; private set;}
+    public string? CoverUrl { get; private set;} //обложка
+    public bool IsPublished { get; private set;}
     public DateTime CreatedAt { get; }
     public Guid UserId { get; }
     public User? User { get; }
@@ -78,15 +78,26 @@ public class Beat
         return beat;
     }
     
-    public Beat Update(string title, decimal price, string audioUrl, bool isPublished,
+    public void Update(string title, decimal price, string audioUrl, bool isPublished,
         string? description, string? coverUrl)
     {
-        if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(audioUrl))
-            throw new ArgumentException("Title and AudioUrl cannot be empty");
+        if (string.IsNullOrEmpty(title))
+            throw new ArgumentException("Title cannot be empty");
         
-        return new Beat(Id, title, price, audioUrl, isPublished, description, coverUrl, UserId, CreatedAt);
+        if (string.IsNullOrEmpty(audioUrl))
+            throw new ArgumentException("AudioUrl cannot be empty");
+        
+        if (price < 0)
+            throw new ArgumentException("Price cannot be negative");
+        
+        Title = title;
+        Price = price;
+        AudioUrl = audioUrl;
+        IsPublished = isPublished;
+        Description = description;
+        CoverUrl = coverUrl;
+        
     }
-    
     
     public void AddLicense(License license)
     {

@@ -21,7 +21,7 @@ public class BeatService(
     {
         Log.Information("Getting all beats");
         
-        var beats = await _beatRepository.GetAll();
+        var beats = await _beatRepository.GetAllAsync();
         
         var response = beats.Select(b => 
             new BeatResponse(b.Title, b.Price, b.AudioUrl,
@@ -46,7 +46,7 @@ public class BeatService(
         
         Log.Information("Getting beats for user {UserId}", userId);
         
-        var beats = await _beatRepository.GetByUserId(userId);
+        var beats = await _beatRepository.GetByUserIdAsync(userId);
         
         var response = beats.Select(b => 
             new BeatResponse(b.Title, b.Price, b.AudioUrl,
@@ -63,7 +63,7 @@ public class BeatService(
         
         Log.Information("User {UserId} is creating a new beat", currentUserId);
         
-        var user = await _userRepository.GetById(currentUserId);
+        var user = await _userRepository.GetByIdAsync(currentUserId);
 
         var beat = Beat.Create(
             request.Title,
@@ -74,39 +74,35 @@ public class BeatService(
             request.CoverUrl,
             user);
         
-        await _beatRepository.Create(beat);
+        await _beatRepository.CreateAsync(beat);
         
         Log.Information("Created new beat {BeatId} by {UserId}", beat.Id, user.Id);
     }
-
-    // доделать
+    
     public async Task UpdateBeat(Guid beatId, UpdateBeatRequest request)
     {
         var currentUserId = _currentUserService.GetUserId();
 
         Log.Information("User {UserId} attempting to update beat {BeatId}", currentUserId, beatId);
 
-        var beat = await _beatRepository.GetById(beatId);
+        var beat = await _beatRepository.GetByIdAsync(beatId);
         
         if (beat == null)
             throw new NotFoundException($"Beat with id {beatId} not found");
         
         if (beat.UserId != currentUserId)
-        {
-            Log.Warning("User {UserId} does not have permission to update beat {BeatId}", currentUserId, beatId);
             throw new UnauthorizedAccessException("You can only edit your own beats");
-        }
 
-        var updatedBeat = Beat.Create(
+        beat.Update(
             request.Title,
             request.Price,
             request.AudioUrl,
             beat.IsPublished,
             request.Description,
-            request.CoverUrl,
-            beat.User);
+            request.CoverUrl);
+            
 
-        await _beatRepository.Update(updatedBeat);
+        await _beatRepository.UpdateAsync(beat);
 
         Log.Information("Beat {BeatId} updated successfully by user {UserId}", beatId, currentUserId);
     }
@@ -116,12 +112,27 @@ public class BeatService(
         if (currentUserService.GetUserRole() != "Admin")
             throw new UnauthorizedAccessException("Only admin users can do this");
         
-        var result = await userRepository.Delete(beatId);
+        var result = await _beatRepository.DeleteAsync(beatId);
         
         Log.Information("The result of deleting beat with id {beatId} is {result}", beatId, result);
         
         return result;
     }
 
-    
+    public async Task<BeatResponse> GetBeatById(Guid beatId)
+    {
+        Log.Information("Getting beat by id {BeatId}", beatId);
+
+        var beat = await _beatRepository.GetByIdAsync(beatId);
+        
+        if (beat == null)
+            throw new NotFoundException($"Beat with id {beatId} not found");
+        
+        var response = new BeatResponse(beat.Title, beat.Price, beat.AudioUrl,
+            beat.Description, beat.CoverUrl);
+        
+        Log.Information("Returned beat {BeatId}", beatId);
+        
+        return response;
+    }
 }

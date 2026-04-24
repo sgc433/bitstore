@@ -9,4 +9,5 @@ public interface IBeatService
     Task CreateBeat(BeatRequest request);
     Task UpdateBeat(Guid beatId, UpdateBeatRequest request);
     Task<bool> DeleteBeat(Guid beatId);
+    Task<BeatResponse> GetBeatById(Guid beatId);
 }

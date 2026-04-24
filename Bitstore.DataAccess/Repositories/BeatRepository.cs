@@ -12,7 +12,7 @@ public class BeatRepository(BitstoreDbContext context): IBeatRepository
     private readonly BitstoreDbContext _context = context;
    
     
-    public async Task<List<Beat>> GetAll()
+    public async Task<List<Beat>> GetAllAsync()
     {
         var beatEntities = await _context.Beats
             .AsNoTracking()
@@ -36,7 +36,7 @@ public class BeatRepository(BitstoreDbContext context): IBeatRepository
         return beats;
     }
 
-    public async Task Create(Beat beat)
+    public async Task CreateAsync(Beat beat)
     {
         if (beat == null) 
             throw new ArgumentNullException($"Beat {beat.Id} not found");
@@ -64,7 +64,7 @@ public class BeatRepository(BitstoreDbContext context): IBeatRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> Delete(Guid beatId)
+    public async Task<bool> DeleteAsync(Guid beatId)
     {
         if (beatId == Guid.Empty)
             throw new ArgumentException("BeatId cannot be empty", nameof(beatId));
@@ -82,7 +82,7 @@ public class BeatRepository(BitstoreDbContext context): IBeatRepository
         return deletedCount > 0;
     }
 
-    public async Task Update(Beat beat)
+    public async Task UpdateAsync(Beat beat)
     {
         if (beat == null)
             throw new ArgumentNullException(nameof(beat));
@@ -110,7 +110,7 @@ public class BeatRepository(BitstoreDbContext context): IBeatRepository
             });
     }
 
-    public async Task<Beat> GetById(Guid beatId)
+    public async Task<Beat> GetByIdAsync(Guid beatId)
     {
         var beatEntity = await _context.Beats
             .AsNoTracking()
@@ -125,12 +125,7 @@ public class BeatRepository(BitstoreDbContext context): IBeatRepository
         return beat;
     }
 
-    public Task<Beat> GetByIdWithDetails(Guid beatId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<List<Beat>> GetByUserId(Guid userId)
+    public async Task<List<Beat>> GetByUserIdAsync(Guid userId)
     {
         var beatEntities = await _context.Beats
             .Where(b => b.UserId == userId)
