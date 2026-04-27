@@ -1,6 +1,4 @@
-﻿using Bitstore.Core.Enums;
-
-namespace Bitstore.Core.Models;
+﻿namespace Bitstore.Core.Models;
 
 public class User
 {
@@ -16,12 +14,23 @@ public class User
         PasswordHash = passwordHash;
         Role = role;
     }
-    public Guid  Id { get; }
-    public string Username { get;  }
-    public string Email { get;  }
-    public string Role { get; } 
-    public string PasswordHash { get;  }
-    public decimal Balance { get; } = 0;
+
+    private User(Guid userId, string username,
+        string email, string role)
+    {
+        Id = userId;
+        Username = username;
+        Email = email;
+        Role = role;
+        PasswordHash = "";
+    }
+    
+    public Guid  Id { get; private set; }
+    public string Username { get;  private set; }
+    public string Email { get; private set; }
+    public string Role { get; private set; } 
+    public string PasswordHash { get;  private set; }
+    public decimal Balance { get; private set; } = 0;
     
     public IReadOnlyCollection<Beat> Beats => _beats;
     public IReadOnlyCollection<Order> Orders => _orders;
@@ -30,14 +39,26 @@ public class User
     public static  User Create(Guid userId, string username, 
         string email, string passwordHash, string role)
     {
-        // validation
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(passwordHash))
-        {
             throw new ArgumentNullException();
-        }
+        
         return new User(userId, username, email, passwordHash, role);
     }
 
+    public static User FromEntity(Guid id, string username, string email, string role)
+    {
+        if (id == Guid.Empty)
+            throw new ArgumentException("Id cannot be empty", nameof(id));
+    
+        if (string.IsNullOrWhiteSpace(username))
+            throw new ArgumentException("Username cannot be empty", nameof(username));
+    
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ArgumentException("Email cannot be empty", nameof(email));
+        
+        return new User(id, username, email, role);
+    }
+    
     public void AddBeat(Beat beat)
     {
         if (beat == null)

@@ -8,7 +8,9 @@ public class BitstoreDbContext(DbContextOptions<BitstoreDbContext> options) : Db
 {
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<BeatEntity> Beats { get; set; }
-
+    public DbSet<OrderEntity> Orders { get; set; }
+    public DbSet<LicenseEntity> Licenses { get; set; }
+    public DbSet<OrderItemEntity> OrderItems { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserConfiguration());
