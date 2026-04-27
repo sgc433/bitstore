@@ -11,7 +11,7 @@ public class OrderItemEntity
     public Guid BeatId { get; set; }
     public BeatEntity Beat { get; set; }
     
-    public Guid LicenseId { get;  }
+    public Guid LicenseId { get; set; }
     public LicenseEntity License { get; set; }
     
     public Guid SellerId { get; set; }

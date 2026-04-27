@@ -107,6 +107,35 @@ public class Order
         _items.AddRange(items);
     }
     
+    public void Confirm()
+    {
+        if (Status != OrderStatus.Pending)
+            throw new InvalidOperationException($"Cannot confirm order with status {Status}");
+        
+        if (!_items.Any())
+            throw new InvalidOperationException("Cannot confirm order without items");
+        
+        Status = OrderStatus.Confirmed;
+    }
+    
+    public void Complete()
+    {
+        if (Status != OrderStatus.Confirmed)
+            throw new InvalidOperationException($"Only confirmed orders can be completed. Current status: {Status}");
+        
+        Status = OrderStatus.Completed;
+    }
+    
+    public void Cancel()
+    {
+        if (Status == OrderStatus.Completed)
+            throw new InvalidOperationException("Cannot cancel completed order");
+        
+        if (Status == OrderStatus.Cancelled)
+            throw new InvalidOperationException("Order is already cancelled");
+        
+        Status = OrderStatus.Cancelled;
+    }
     
     private static string GenerateOrderNumber()
     {

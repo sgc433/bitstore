@@ -14,6 +14,6 @@ public class BeatEntity
     public DateTime CreatedAt { get; set; }
     public Guid UserId { get; set; }
     public UserEntity User { get; set; } = null!;
-    public List<LicenseEntity> Licenses = new();
-    public List<OrderItemEntity> Items = new();
+    public List<LicenseEntity> Licenses { get; set; } = new();
+    public List<OrderItemEntity> Items { get; set; } = new();
 }

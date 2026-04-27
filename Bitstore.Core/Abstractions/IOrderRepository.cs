@@ -12,4 +12,5 @@ public interface IOrderRepository
     Task CreateAsync(Order order);
     Task UpdateAsync(Order order);
     Task<bool> DeleteAsync(Guid orderId);
+    Task<Order> CreateOrderWithItemsAsync(Order order, List<License> licensesToUpdate);
 }

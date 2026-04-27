@@ -62,7 +62,7 @@ public class License
         
         return license;
     }
-    
+
     public static License FromEntity(Guid id, LicenseType type, decimal price, 
         string name, Guid beatId, Beat? beat = null, List<OrderItem>? orderItems = null)
     {
@@ -79,5 +79,35 @@ public class License
             throw new ArgumentException("BeatId cannot be empty", nameof(beatId));
         
         return new License(id, type, price, name, beatId, beat, orderItems);
+    }
+
+    public void UpdateType(LicenseType requestType)
+    {
+        if (requestType == Type)
+            return;
+        
+        Type = requestType;
+    }
+
+    public void UpdateName(string requestName)
+    {
+        if (string.IsNullOrWhiteSpace(requestName))
+            throw new ArgumentException("Name cannot be empty", nameof(requestName));
+
+        if (requestName == Name)
+            return;
+        
+        Name = requestName;
+    }
+
+    public void UpdatePrice(decimal requestPrice)
+    {
+        if (requestPrice < 0)
+            throw new ArgumentException("Price cannot be negative", nameof(requestPrice));
+        
+        if (requestPrice == Price)
+            return;
+        
+        Price = requestPrice;
     }
 }

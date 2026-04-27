@@ -122,5 +122,13 @@ public class OrderItem
     
         return orderItem;
     }
-    
+
+    public void SetOrder(Order order)
+    {
+        if (order == null)
+            throw new  ArgumentNullException(nameof(order));
+        
+        Order = order;
+        OrderId = order.Id;
+    }
 }

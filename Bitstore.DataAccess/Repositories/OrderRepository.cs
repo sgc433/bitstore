@@ -355,4 +355,54 @@ public class OrderRepository(BitstoreDbContext context) : IOrderRepository
 
         return deletedCount > 0;
     }
+
+    public async Task<Order> CreateOrderWithItemsAsync(Order order, List<License> licensesToUpdate)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        
+        try
+        {
+            var orderEntity = new OrderEntity
+            {
+                Id = order.Id,
+                OrderNumber = order.OrderNumber,
+                BuyerId = order.BuyerId,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                CreatedAt = order.CreatedAt,
+                Items = order.Items.Select(item => new OrderItemEntity
+                {
+                    Id = item.Id,
+                    Price = item.Price,
+                    OrderId = order.Id,
+                    BeatId = item.BeatId,
+                    LicenseId = item.LicenseId,
+                    SellerId = item.SellerId
+                }).ToList()
+            };
+            
+            foreach (var license in licensesToUpdate)
+            {
+                var licenseEntity = await _context.Licenses
+                    .FirstOrDefaultAsync(l => l.Id == license.Id);
+                
+                if (licenseEntity != null)
+                {
+                    _context.Licenses.Update(licenseEntity);
+                }
+            }
+            
+            await _context.Orders.AddAsync(orderEntity);
+            await _context.SaveChangesAsync();
+            
+            await transaction.CommitAsync();
+            
+            return order;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
 }
